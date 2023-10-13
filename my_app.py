@@ -5,137 +5,127 @@ from datetime import datetime
 
 
 class Task(ft.UserControl):
-    def __init__(self, task_name, task_status_change, task_delete):
+    def __init__(self, nombre_actividad, estatus_actividad, eliminar_actividad):
         super().__init__()
-        self.completed = False
-        self.task_name = task_name
-        self.task_status_change = task_status_change
-        self.task_delete = task_delete
-
-    def build(self):
+        self.completada = False
+        self.nombre_actividad = nombre_actividad
+        self.estatus_actividad = estatus_actividad
+        self.eliminar_actividad = eliminar_actividad
         _fecha_actual = datetime.now()
-        _hora_actual = f"{_fecha_actual.hour}:{_fecha_actual.minute}:{_fecha_actual.second}"
         self.fecha = Controles.display_texto(str(_fecha_actual))
-        self.hora_inicio = Controles.display_texto(_hora_actual)
+        self.hora_inicio = Controles.display_texto(str(_fecha_actual.strftime('%I:%M:%S %p')))
         self.hora_fin = Controles.display_texto("--")
-        self.edit_name = Controles.input_texto(e=1)
-        self.display_task = Controles.input_checkbox(
-            False, self.task_name, self.status_changed)
-        botones_accion = [Controles.icono(icon=ft.icons.CREATE_OUTLINED, txt=texto.editar, fn=self.edit_clicked),
-                          Controles.icono(icon=ft.icons.DELETE_OUTLINE, txt=texto.eliminar, fn=self.delete_clicked)]
-        _fila_actividad = [self.display_task, self.hora_inicio,
-                           self.hora_fin, Controles.layout_fila(c=botones_accion)]
-        self.display_view = Controles.layout_fila(c=_fila_actividad)
-        _fila_editar_actividad = [self.edit_name, Controles.icono(icon=ft.icons.DONE_OUTLINE_OUTLINED,
-                                                                  txt=texto.actualizar,
-                                                                  fn=self.save_clicked,
-                                                                  color="#f0f0f0")]
-        self.edit_view = Controles.layout_fila(
-            c=_fila_editar_actividad, v=False)
-        return ft.Column(controls=[self.display_view, self.edit_view])
+        
+    def build(self):        
+        self.editar_nombre = Controles.input_texto(e=1)
+        
+        self.actividad_check = Controles.input_checkbox(False, self.nombre_actividad, self.status_changed)
+        
+        botones_actividad = [Controles.icono(icon=ft.icons.CREATE_OUTLINED, txt=texto.editar, fn=self.editar_clickeado),
+                             Controles.icono(icon=ft.icons.DELETE_OUTLINE, txt=texto.eliminar, fn=self.eliminar_clickeado)]
+        
+        icono_editar = Controles.icono(icon=ft.icons.DONE_OUTLINE_OUTLINED,  color="#f0f0f0",
+                                       txt=texto.actualizar, fn=self.guardar_clickeado)
+        
+        fila_actividad = [self.actividad_check,self.hora_inicio,
+                          self.hora_fin, Controles.layout_fila(c=botones_actividad)]
+        
+        fila_editar_actividad = [self.editar_nombre, icono_editar]
+        
+        self.display_actividad = Controles.layout_fila(c=fila_actividad, v=True)
+        
+        self.edit_actividad = Controles.layout_fila(c=fila_editar_actividad, v=False)
+        return ft.Column(controls=[self.display_actividad, self.edit_actividad])
 
-    async def edit_clicked(self, e):
-        self.edit_name.value = self.display_task.label
-        self.display_view.visible = False
-        self.edit_view.visible = True
+    async def editar_clickeado(self, e):
+        self.editar_nombre.value = self.actividad_check.label
+        self.display_actividad.visible = False
+        self.edit_actividad.visible = True
         await self.update_async()
 
-    async def save_clicked(self, e):
-        self.display_task.label = self.edit_name.value
-        self.display_view.visible = True
-        self.edit_view.visible = False
+    async def guardar_clickeado(self, e):
+        self.actividad_check.label = self.editar_nombre.value
+        self.display_actividad.visible = True
+        self.edit_actividad.visible = False
+        await self.update_async()
+    
+    async def actualizar_finalizado(self,e):
+        dtn=datetime.now()
+        self.hora_fin.value = str(dtn.strftime('%I:%M:%S %p')) if self.completada == True else "--"
         await self.update_async()
 
     async def status_changed(self, e):
-        _fecha_actual = datetime.now()
-        self.completed = self.display_task.value
-        if self.completed == True:
-            self.hora_fin = Controles.display_texto(
-                f"{_fecha_actual.hour}:{_fecha_actual.minute}:{_fecha_actual.second}")
+        self.completada = self.actividad_check.value
+        await self.actualizar_finalizado(e)
+        await self.estatus_actividad(self)
 
-        else:
-            self.hora_fin = Controles.display_texto("--")
-        await self.task_status_change(self)
-
-    async def delete_clicked(self, e):
-        await self.task_delete(self)
+    async def eliminar_clickeado(self, e):
+        await self.eliminar_actividad(self)
 
 
 class TodoApp(ft.UserControl):
     def build(self):
-        self.new_task = Controles.input_texto(
-            txt=texto.tooltip_agregar, e=True, fn=self.add_clicked)
-        self.tasks = ft.Column()
-        self.encabezado = Controles.layout_fila(c=[Controles.display_texto("Actividad"),
-                                                   Controles.display_texto(
-                                                       "Hora Inicio"),
-                                                   Controles.display_texto(
-                                                       "Hora Fin"),
+        self.actividades = ft.Column()
+        self.items_faltantes = ft.Text(texto.sin_entradas)
+        texto_encabezado_pagina = [ft.Text(value=texto.encabezado,style=ft.TextThemeStyle.HEADLINE_MEDIUM)]
+        self.input_nueva_actividad = Controles.input_texto(txt=texto.tooltip_agregar, e=True, fn=self.agregar_clickeado)
+        barra_nueva_actividad = [self.input_nueva_actividad,ft.FloatingActionButton(icon=ft.icons.ADD, on_click=self.agregar_clickeado)]
+        self.encabezado_actividades = Controles.layout_fila(c=[Controles.display_texto("Actividad"),
+                                                   Controles.display_texto("Hora Inicio"),
+                                                   Controles.display_texto("Hora Fin"),
                                                    Controles.display_texto("Acciones")])
-        self.filtrados = Controles.tab(c=[Controles.tab_item(texto.tabs_todas),
-                  Controles.tab_item(texto.tabs_activas),
-                  Controles.tab_item(texto.tabs_completas)])
-
-        self.items_left = ft.Text(texto.sin_entradas)
-
-        # application's root control (i.e. "view") containing all other controls
-        _encabezado = [ft.Text(value=texto.encabezado,
-                               style=ft.TextThemeStyle.HEADLINE_MEDIUM)]
-        _barra_nueva_actividad = [self.new_task,
-                                  ft.FloatingActionButton(icon=ft.icons.ADD, on_click=self.add_clicked)]
-        _info_footer = Controles.layout_fila(c=[self.items_left,
-                                                ft.OutlinedButton(
-                                                    text=texto.limpiar_todos,
-                                                    on_click=self.clear_clicked),
-                                                ])
+        self.filtros_tabs = Controles.tab(fn=self.tabs_actualzadas,
+                                       c=[Controles.tab_item(texto.tabs_todas),
+                                          Controles.tab_item(texto.tabs_activas),
+                                          Controles.tab_item(texto.tabs_completas)])        
+        self.info_footer = Controles.layout_fila(c=[self.items_faltantes,ft.OutlinedButton(text=texto.limpiar_todos,
+                                                                                       on_click=self.limpiar_clickeados)])
         return ft.Column(
             width=600,
             controls=[
-                Controles.layout_fila(
-                    c=_encabezado, a=ft.MainAxisAlignment.CENTER),
-                Controles.layout_fila(c=_barra_nueva_actividad),
-                ft.Column(spacing=25, controls=[self.filtrados,
-                                                self.tasks,
-                                                self.encabezado,
-                                                _info_footer])])
-
-    async def add_clicked(self, e):
-        if self.new_task.value:
-            task = Task(self.new_task.value,
-                        self.task_status_change,
-                        self.task_delete)
-            self.tasks.controls.append(task)
-            self.new_task.value = texto.barra_agregar_vacia
-            await self.new_task.focus_async()
+                Controles.layout_fila(c=texto_encabezado_pagina, a=ft.MainAxisAlignment.CENTER),
+                Controles.layout_fila(c=barra_nueva_actividad),
+                ft.Column(spacing=25, controls=[self.filtros_tabs,
+                                                self.encabezado_actividades,
+                                                self.actividades,
+                                                self.info_footer])])
+    async def agregar_clickeado(self, e):
+        if self.input_nueva_actividad.value:
+            actividad = Task(self.input_nueva_actividad.value,
+                        self.estatus_actividad, self.eliminar_actividad)
+            self.actividades.controls.append(actividad)
+            self.input_nueva_actividad.value = texto.barra_agregar_vacia
+            await self.input_nueva_actividad.focus_async()
             await self.update_async()
 
-    async def task_status_change(self, task):
+    async def estatus_actividad(self, actividad):
         await self.update_async()
 
-    async def task_delete(self, task):
-        self.tasks.controls.remove(task)
+    async def eliminar_actividad(self, actividad):
+        self.actividades.controls.remove(actividad)
         await self.update_async()
 
-    async def tabs_changed(self, e):
+    async def tabs_actualzadas(self, e):
         await self.update_async()
 
-    async def clear_clicked(self, e):
-        for task in self.tasks.controls[:]:
-            if task.completed:
-                await self.task_delete(task)
+    async def limpiar_clickeados(self, e):
+        for actividad in self.actividades.controls[:]:
+            if actividad.completada:
+                await self.eliminar_actividad(actividad)
 
     async def update_async(self):
-        status = self.filtrados.tabs[self.filtrados.selected_index].text
-        count = 0
-        for task in self.tasks.controls:
-            task.visible = (
-                status == texto.tabs_todas
-                or (status == texto.tabs_activas and task.completed == False)
-                or (status == texto.tabs_completas and task.completed)
-            )
-            if not task.completed:
+        status = self.filtros_tabs.tabs[self.filtros_tabs.selected_index].text
+        count = 0        
+        for actividad in self.actividades.controls:
+            actividad.visible = (status == texto.tabs_todas 
+                                 or (status == texto.tabs_activas and actividad.completada == False)
+                                 or (status == texto.tabs_completas and actividad.completada))
+            #actividad.hora_fin.value = f"{datetime.now().hour}:{datetime.now().minute}:{datetime.now().second}"
+            if not actividad.completada:
                 count += 1
-        self.items_left.value = texto.cantidad_entradas.format(N=count)
+                #actividad.hora_fin.value = "--"
+                
+        self.items_faltantes.value = texto.cantidad_entradas.format(N=count)
         await super().update_async()
 
 
