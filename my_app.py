@@ -1,10 +1,10 @@
-from variabes import Variables as texto
-from funciones import Controles, Iconos
+from helpers.variables import Variables as texto
+from helpers.funciones import Controles, Iconos, Temas
 from datetime import datetime
 import pandas as pd
 import flet as ft
 
-class Task(ft.UserControl):
+class Actividad(ft.UserControl):
     def __init__(self, nombre_actividad, estatus_actividad, eliminar_actividad):
         super().__init__()
         self.completada = False
@@ -62,11 +62,12 @@ class Task(ft.UserControl):
 
 
 class TodoApp(ft.UserControl):
-    dialogo_descarga = ft.AlertDialog(title=ft.Text("¡Actividades Descargadas!"))
+    #dialogo_descarga = ft.AlertDialog(title=ft.Text("¡Actividades Descargadas!"))
     def build(self):
         self.actividades = ft.Column()
-        self.items_faltantes = ft.Text(texto.sin_entradas)
-        texto_encabezado_pagina = [ft.Text(value=texto.encabezado, style=ft.TextThemeStyle.HEADLINE_MEDIUM)]
+        self.items_faltantes = Controles.display_texto(t=texto.sin_entradas)
+        texto_encabezado_pagina = [Controles.display_texto(t=texto.encabezado,
+                                                           st=Temas.txt_headline_med)]
         self.input_nueva_actividad = Controles.input_texto(txt=texto.tooltip_agregar,
                                                            e=True,
                                                            fn=self.agregar_clickeado)
@@ -96,7 +97,7 @@ class TodoApp(ft.UserControl):
 
     async def agregar_clickeado(self, e):
         if self.input_nueva_actividad.value:
-            actividad = Task(self.input_nueva_actividad.value,
+            actividad = Actividad(self.input_nueva_actividad.value,
                              self.estatus_actividad, self.eliminar_actividad)
             self.actividades.controls.append(actividad)
             self.input_nueva_actividad.value = texto.barra_agregar_vacia
@@ -143,14 +144,12 @@ class TodoApp(ft.UserControl):
         self.items_faltantes.value = texto.cantidad_entradas.format(N=count)
         await super().update_async()
 
-
 async def main(page: ft.Page):
     page.title = texto.titulo
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     page.scroll = ft.ScrollMode.ADAPTIVE
-    page.dialog = TodoApp.dialogo_descarga
+    #page.dialog = TodoApp.dialogo_descarga
     await page.add_async(TodoApp())
-
 
 ft.app(main)
 

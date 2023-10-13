@@ -86,9 +86,8 @@ Y a Trabajar 🫡🤗
 
 
 
+#### TO-DOs:
 
 
-
-
-
-
+*   *TO-DO: Dialogo al descargar*
+*   *Cargar actividades previas al iniciar*

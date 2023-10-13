@@ -1,13 +1,15 @@
 import flet as ft
 
+class Temas:
+    txt_headline_med = ft.TextThemeStyle.HEADLINE_MEDIUM
 class Iconos:
     create_outline = ft.icons.CREATE_OUTLINED
     delete_outline = ft.icons.DELETE_OUTLINE
     done_outline = ft.icons.DONE_OUTLINE_OUTLINED
 
 class Controles:
-    def display_texto(t, s=None, c=ft.colors.WHITE, bgc=None, w=None):
-        return ft.Text(t,   size=s, color=c,    bgcolor=bgc,    weight=w)
+    def display_texto(t, s=None, c=ft.colors.WHITE, bgc=None, w=None, st=None):
+        return ft.Text(t,   size=s, color=c,    bgcolor=bgc,    weight=w, style= st)
 
     def input_texto(txt="", e=True, fn=None):
         return ft.TextField(hint_text=txt, on_submit=fn, expand=e)
