@@ -8,9 +8,9 @@ Flet es una librería de Python basada en flutter para renderizar aplicaciones d
 
 Este es un ejemplo rápido de la guía oficial:
 
-[Tutorial Clone Trello 'TROLLI'](https://flet.dev/docs/tutorials/trello-clone/)
+[Create To-Do app in Python with Flet](https://flet.dev/docs/tutorials/python-todo/)
 
-[GitHub Clone Trello 'TROLLI'](https://github.com/flet-dev/examples/tree/main/python/apps/todo)
+[GitHub To-Do app in Python with Flet](https://github.com/flet-dev/examples/tree/main/python/apps/todo)
 
 
 ## Guía Rápida:
