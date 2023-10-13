@@ -19,7 +19,8 @@ class Task(ft.UserControl):
             f"{_fecha_actual.hour}:{_fecha_actual.minute}:{_fecha_actual.second}")
         self.hora_fin = Controles.display_texto("--")
         self.edit_name = Controles.input_texto(e=1)
-        self.display_task = Controles.input_checkbox(val = False,lbl=self.task_name,fn = self.status_changed)
+        self.display_task = Controles.input_checkbox(
+            val=False, lbl=self.task_name, fn=self.status_changed)
         self.display_view = ft.Row(
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
             vertical_alignment=ft.CrossAxisAlignment.CENTER,
@@ -27,19 +28,18 @@ class Task(ft.UserControl):
                 self.display_task,
                 self.hora_inicio,
                 self.hora_fin,
+
                 ft.Row(
                     spacing=0,
                     controls=[
-                        ft.IconButton(
-                            icon=ft.icons.CREATE_OUTLINED,
-                            tooltip=texto.editar,
-                            on_click=self.edit_clicked,
-                        ),
-                        ft.IconButton(
-                            ft.icons.DELETE_OUTLINE,
-                            tooltip=texto.eliminar,
-                            on_click=self.delete_clicked,
-                        ),
+                        Controles.icono(icon=ft.icons.CREATE_OUTLINED,
+                                        txt=texto.editar,
+                                        fn=self.edit_clicked,
+                                        color="#f0f0f0"),
+                        Controles.icono(icon=ft.icons.DELETE_OUTLINE,
+                                        txt=texto.eliminar,
+                                        fn=self.delete_clicked,
+                                        color="#f0f0f0"),
                     ],
                 ),
             ],
@@ -51,12 +51,10 @@ class Task(ft.UserControl):
             vertical_alignment=ft.CrossAxisAlignment.CENTER,
             controls=[
                 self.edit_name,
-                ft.IconButton(
-                    icon=ft.icons.DONE_OUTLINE_OUTLINED,
-                    icon_color=ft.colors.GREEN,
-                    tooltip=texto.actualizar,
-                    on_click=self.save_clicked,
-                ),
+                Controles.icono(icon=ft.icons.DONE_OUTLINE_OUTLINED,
+                                txt=texto.actualizar,
+                                fn=self.save_clicked,
+                                color="#f0f0f0"),
             ],
         )
         return ft.Column(controls=[self.display_view, self.edit_view])
@@ -91,7 +89,7 @@ class Task(ft.UserControl):
 class TodoApp(ft.UserControl):
     def build(self):
         self.new_task = Controles.input_texto(
-            txt=texto.tooltip_agregar,e=True,fn=self.add_clicked)        
+            txt=texto.tooltip_agregar, e=True, fn=self.add_clicked)
         self.tasks = ft.Column()
         self.encabezado = ft.Row(
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,

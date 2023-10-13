@@ -18,5 +18,5 @@ class Controles:
         return ft.IconButton(icon=icon, tooltip=txt,    on_click=fn)
     
     def icono(icon,color=None,txt=None,fn=None):
-        ft.IconButton(icon=icon,    icon_color=color,   tooltip=txt,    on_click=fn)
+        return ft.IconButton(icon=icon,    icon_color=color,   tooltip=txt,    on_click=fn)
         
