@@ -19,12 +19,7 @@ class Task(ft.UserControl):
             f"{_fecha_actual.hour}:{_fecha_actual.minute}:{_fecha_actual.second}")
         self.hora_fin = Controles.display_texto("--")
         self.edit_name = Controles.input_texto(e=1)
-        
-        self.display_task = ft.Checkbox(
-            value=False,
-            label=self.task_name,
-            on_change=self.status_changed
-        )
+        self.display_task = Controles.input_checkbox(val = False,lbl=self.task_name,fn = self.status_changed)
         self.display_view = ft.Row(
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
             vertical_alignment=ft.CrossAxisAlignment.CENTER,
