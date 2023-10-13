@@ -1,5 +1,9 @@
 import flet as ft
 
+class Iconos:
+    create_outline = ft.icons.CREATE_OUTLINED
+    delete_outline = ft.icons.DELETE_OUTLINE
+    done_outline = ft.icons.DONE_OUTLINE_OUTLINED
 
 class Controles:
     def display_texto(t, s=None, c=ft.colors.WHITE, bgc=None, w=None):

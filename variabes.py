@@ -2,7 +2,7 @@ class Variables:
     editar = "Editar"
     eliminar = "Eliminar"
     actualizar = "Actualizar"
-    limpiar_todos = "Limpiar"
+    limpiar_todos = "Descargar"
     barra_agregar_vacia = ""
     tooltip_agregar = "Actividades del día"
     tabs_todas = "Todas"
@@ -12,4 +12,5 @@ class Variables:
     encabezado = "Mis actividades"
     cantidad_entradas = str("{N} Tareas pendientes.")
     titulo = "Mis Actividades Diarias"
+    archivo = "registros_csv"
         
