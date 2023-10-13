@@ -17,9 +17,9 @@ class Task(ft.UserControl):
         self.fecha = Controles.display_texto(str(_fecha_actual))
         self.hora_inicio = Controles.display_texto(
             f"{_fecha_actual.hour}:{_fecha_actual.minute}:{_fecha_actual.second}")
-        # self.hora_inicio = Controles.display_texto("Algo")
         self.hora_fin = Controles.display_texto("--")
-        self.edit_name = ft.TextField(expand=1)
+        self.edit_name = Controles.input_texto(e=1)
+        
         self.display_task = ft.Checkbox(
             value=False,
             label=self.task_name,
@@ -95,9 +95,8 @@ class Task(ft.UserControl):
 
 class TodoApp(ft.UserControl):
     def build(self):
-        self.new_task = ft.TextField(
-            hint_text=texto.tooltip_agregar, on_submit=self.add_clicked, expand=True
-        )
+        self.new_task = Controles.input_texto(
+            txt=texto.tooltip_agregar,e=True,fn=self.add_clicked)        
         self.tasks = ft.Column()
         self.encabezado = ft.Row(
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
